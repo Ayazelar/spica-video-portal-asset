@@ -1,3 +1,15 @@
+# API KEY
+apiVersion: passport/v1
+kind: ApiKey
+metadata:
+  name: video-portal-asset-api-key
+spec:
+  name: Secret Api Key For VideoPortal
+  policies:
+    - BucketFullAccess
+    - FunctionFullAccess
+    - IdentityFullAccess
+---
 # BUCKET - User
 apiVersion: bucket/v1
 kind: Schema
@@ -488,14 +500,18 @@ spec:
   timeout: 34.7
   environment:
     - name: USER_BUCKET_ID
-      value: 621890bc24302e002d2bfe7d
+      valueFrom:
+        resourceFieldRef:
+          schemaName: spica-video-portal-asset-user-bucket
     - name: SECRET_API_KEY
-      value: fskk1akvi1elv0
+      valueFrom:
+        resourceFieldRef:
+          apiKeyName: video-portal-asset-api-key
   dependency:
     - name: "@spica-devkit/bucket"
-      version: ^0.9.17
+      version: latest
     - name: "@spica-devkit/identity"
-      version: ^0.9.17
+      version: latest
   title: Video-Portal Auth
   code: ./function/spica-video-portal-asset-video-portal-auth-function.js
   runtime:
@@ -511,20 +527,6 @@ spec:
   type: http
   active: true
   name: register
-  func: spica-video-portal-asset-video-portal-auth-function
-  httpOptions:
-    method: Post
-    path: /register
----
-# TRIGGER - register2
-apiVersion: function/v1
-kind: Trigger
-metadata:
-  name: register2
-spec:
-  type: http
-  active: true
-  name: register2
   func: spica-video-portal-asset-video-portal-auth-function
   httpOptions:
     method: Post
